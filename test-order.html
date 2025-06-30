@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order System</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .success { color: green; margin-top: 10px; }
+        .error { color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Test Order System</h1>
+    
+    <form id="testOrderForm">
+        <div class="form-group">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" name="customerName" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="product">Product:</label>
+            <select id="product" name="product" required>
+                <option value="">Select a product</option>
+                <option value="Lost in Casablanca">Lost in Casablanca - 129 DH</option>
+                <option value="Rise">Rise - 129 DH</option>
+                <option value="Rush">Rush - 129 DH</option>
+                <option value="SEGRETO">SEGRETO - 129 DH</option>
+                <option value="Trust The Process">Trust The Process - 129 DH</option>
+                <option value="Wild Flowers">Wild Flowers - 129 DH</option>
+            </select>
+        </div>
+        
+        <button type="submit">Submit Test Order</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <hr style="margin: 30px 0;">
+    
+    <h2>Quick Links</h2>
+    <p><a href="http://localhost:3001/orders.html" target="_blank">View All Orders</a></p>
+    <p><a href="http://localhost:3001" target="_blank">Main Website</a></p>
+
+    <script>
+        document.getElementById('testOrderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const orderData = {
+                customerName: formData.get('customerName'),
+                city: formData.get('city'),
+                phone: formData.get('phone'),
+                items: [{
+                    name: formData.get('product'),
+                    color: 'noir',
+                    quantity: 1,
+                    price: 129,
+                    total: 129
+                }],
+                totalAmount: 129
+            };
+            
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    resultDiv.innerHTML = '<div class="success">✅ Order submitted successfully! Order ID: ' + result.data.order.id + '</div>';
+                    this.reset();
+                } else {
+                    throw new Error(result.message || 'Failed to submit order');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = '<div class="error">❌ Error: ' + error.message + '</div>';
+            }
+        });
+    </script>
+</body>
+</html>

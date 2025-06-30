@@ -1,0 +1,12 @@
+{
+  "name": "blaze-orders",
+  "version": "1.0.0",
+  "description": "BLAZE T-shirt orders system",
+  "main": "order-server.js",
+  "scripts": {
+    "start": "node order-server.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
